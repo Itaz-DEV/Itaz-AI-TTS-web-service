@@ -1,5 +1,4 @@
 source/outdir
 source/db
 source/translation/Model/*
-source/waveglow
 *.wav
