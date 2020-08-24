@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+	<title></title>
+
+	<!--[if lt IE 9]>
+      <script src="/static/js/html5.js"></script>
+   <![endif]-->
+	<link href="/static/css/common.css" rel="stylesheet" type="text/css">
+	<link href="/static/css/index.css" rel="stylesheet" type="text/css">
+    <link href="/static/css/notosanskr.css" rel="stylesheet" type="text/css">
+    <script src="/static/js/jquery-3.1.1.min.js"></script>
+</head>
+
+<body>
+	<div id="wrap">
+        <div class="main">
+            <div class="inner">
+                <div class="header">
+                    <div>
+                        <img src="/static/img/logo.png"/>
+                    </div>
+                    <div>
+                        <img src="/static/img/header_title.png">
+                    </div>
+                </div>
+                <div class="text">
+                    <div class="title">
+                        <img src="/static/img/main_title.png">
+                    </div>
+                    <div class="sub">
+                        <p class="text_ani">록스의 ‘표준어 사투리 번역 TTS’는 딥러닝 기반의 TTS(Text to Speech) 서비스 입니다.</p>
+                        <p class="text_ani">딥러닝 번역 기술인 NMT(Neural Machine Translation) 기술과 텍스트를 음성으로 바꿔주는 TTS 기술을 결합하여
+                        </p>
+                        <p class="text_ani">표준어를 텍스트로 입력하였을 때 해당 텍스트를 특정 사투리로 번역하고, 해당 사투리의 음성을 실시간으로 제공합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="transWrap">
+            <div class="inner">
+                <form role="form" id="form" name="input_form" method="POST" enctype="multipart/form-data">
+                    <select class="select" name="model">
+                        <option hidden>사투리를 선택해 주세요.</option>
+                        <option value=1>경상도</option>
+                        <option value=2>전라도</option>
+                        <option value=0>제주도</option>
+                    </select>
+                    <select class="select" name="gender">
+                        <option hidden>성별을 선택해 주세요.</option>
+                        <option value=1>여자</option>
+                        <option value=0>남자</option>
+                    </select>
+                    <div class="trans-form">
+                        <div class="standard">
+                            <div class="textWrap">
+                                <textarea placeholder="표준어 문자을 입력하세요." name="input-text"
+                                          method="POST" id="input-text" cols="auto" rows="auto"
+                                          onfocus="empty_default_input_text();"
+                                          onblur="set_default_input_text();"></textarea>
+                            </div>
+                            <div class="btnWrap">
+                                <input type="button" value="다시 입력" id="resetBtn" name="reset">
+                                <input type="button" value="변환" name="ml-submit" id="transBtn">
+                            </div>
+                        </div>
+                        <div class="dialect">
+                            <div class="textWrap">
+                                <textarea placeholder="번역된 텍스트" id="translated-results"></textarea>
+                            </div>
+                            <div class="audioWrap" id="audio-result">
+                                <audio controls id="audio-player" autoplay="autoplay">
+                                </audio>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="inner">
+                <p>록스 | 부산시 금정구 부산대학로 63번길 2 효원산학협력단 408호</p>
+                <p>T. 051 518 2021 | F. 051 518 2022</p>
+                <p>ⓒ 2020 All copyright by LOCS.</p>
+            </div>
+        </div>
+	</div>
+	<script>
+        var Sound = (function () {
+            var df = document.createDocumentFragment();
+            return function Sound(src) {
+                var snd = new Audio(src);
+                df.appendChild(snd); // keep in fragment until finished playing
+                snd.addEventListener('ended', function () {df.removeChild(snd);});
+                snd.play();
+                return snd;
+            }
+        }());
+        ///// 번역
+        $(function(){
+            $('#transBtn').click(function(){
+                $.ajax({
+                    url: '/ml-inference',
+                    data: $('form').serialize(),
+                    type: 'POST',
+                    success: function(response){
+                        ////번역
+
+                        translated_text = response.translated_text
+                        audio_stream = response.audio_stream
+                        /////////// successfully calculated/////////////////
+                        document.getElementById("translated-results").innerHTML= translated_text +"'";
+                        console.log("translated_text:" + translated_text);
+                        document.getElementById("audio-player").src = "data:audio/wav;base64,"+ audio_stream;
+
+                    },
+                    error: function(error){
+                        alert("합성은 실패하였습니다. 오류: " + (error.statusText));
+                    }
+                });
+
+            });
+        });
+        //텍스트박스 리셋
+        $(function(){
+            $('#resetBtn').click(function(){
+               $('.standard textarea').val(''); 
+            });
+            
+        //텍스트 애니메이션
+            $('.text_ani').each(function(){
+              var TH = $(this).offset().top;
+              var textAni = $(this);
+            
+                var CH = $(window).scrollTop() + $(window).height();
+
+				if (CH > TH + 200) {
+					$(textAni).addClass('active')
+				}
+           }); 
+        });
+    </script>
+</body>
+</html>

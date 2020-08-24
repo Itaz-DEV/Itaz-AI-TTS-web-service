@@ -1,0 +1,139 @@
+.inner{
+    max-width: 1400px; margin: 0 auto; width: 100%; padding: 0 16px;
+}
+.main{
+    background-color: #3e8be1; background-image: url(../img/bg.png), url(../img/bg_map.png);
+    background-repeat: no-repeat; background-position: 90% center;
+}
+.main .header{
+    padding: 24px 0;
+}
+.header > div{
+    display: inline-block; vertical-align: middle; margin-right: 24px;
+}
+.main .text{
+    padding: 50px 0px 100px 0;
+}
+.text .title{
+    margin-bottom: 32px;
+}
+.text .title img{
+    width: 100%; max-width: 523px;
+}
+.text .sub p{
+    font-size: 16px; color: #fff; font-weight: 300; line-height: 2rem; letter-spacing: -0.5px;
+    text-shadow: -1px 0 #3e8be1, 0 1px #3e8be1, 1px 0 #3e8be1, 0 -1px #3e8be1;
+}
+.transWrap{
+    margin: 50px 0 100px 0;
+}
+.select{
+    width: 200px; padding: 12px; background-color: #fff; border: 1px solid #cfcfcf;
+    background: url('../img/select_arrow.png') #fff no-repeat 93% 50%; border-radius: 6px;
+    -webkit-appearance: none; -moz-appearance: none; appearance: none; font-size: 12px;
+    margin-bottom: 16px; margin-bottom: 12px; font-size: 14px;
+}
+:focus{
+    outline: none;
+}
+.trans-form{
+    background-image: url(../img/trans.png); background-repeat: no-repeat;
+    background-position: center; background-size: 32px auto;
+}
+.trans-form:after{
+    content: ""; display: block; clear: both;
+}
+.standard{
+    float: left; width: calc((100% - 100px) / 2);
+}
+.dialect{
+    float: right; width: calc((100% - 100px) / 2);
+}
+.textWrap{
+    margin-bottom: 12px;
+}
+.textWrap textarea{
+    width: 100%; padding: 12px; height: 170px; border-radius: 6px; border: 1px solid #cfcfcf;
+    resize: none; font-size: 14px;
+}
+.btnWrap:after{
+    content: ""; display: block; clear: both;
+}
+.btnWrap input[type="button"]{
+    padding: 12px 0; width: calc((100% - 20px) / 2); float: left; margin-right: 20px; border-radius: 6px; outline: none; border: none;
+    cursor: pointer; font-weight: 500;
+}
+#transBtn{
+    margin-right: 0; background-color: rgba(62,139,225,0.8); color: #fff; transition: background-color 0.2s;
+}
+#transBtn:hover{
+    background-color: rgba(62,139,225,1); 
+}
+#resetBtn{
+    border: 1px solid #3e8be1; color: #3e8be1; background-color: #fff;
+}
+#player{
+    width: 100%; height: 43px;
+}
+.footer{
+    padding: 50px 0; border-top: 1px solid #cfcfcf; text-align: center;
+}
+.footer p{
+    color: #7c7c7c; font-size: 12px; line-height: 1.8em;
+}
+.text_ani{
+    -webkit-clip-path: polygon(0 100%,100% 100%,100% 100%,0 100%);
+    clip-path: polygon(0 100%,100% 100%,100% 100%,0 100%);
+    transform: translate3d(0,.3em,0) skewY(5deg);
+    transition: clip-path .6s ease-out,transform .6s ease-out, opacity .6s ease-out;
+    transition: clip-path .6s ease-out,transform .6s ease-out,-webkit-clip-path .6s ease-out, opacity .6s ease-out;
+    -webkit-transform: translate3d(0,.3em,0) skewY(5deg);
+    -webkit-transition: clip-path .6s ease-out,transform .6s ease-out, opacity .6s ease-out;
+    -webkit-transition: clip-path .6s ease-out,transform .6s ease-out,-webkit-clip-path .6s ease-out, opacity .7s ease-out;
+    opacity: 0;
+    overflow: hidden;
+}
+span.text_ani{
+    display: inline-block;
+}
+.text_ani.active{
+        -webkit-clip-path: polygon(0 100%,100% 100%,100% 0,0 0);
+    clip-path: polygon(0 100%,100% 100%,100% 0,0 0);
+    transform: translateZ(0) skewY(0deg);
+    -webkit-transform: translateZ(0) skewY(0deg);
+    opacity: 1;
+    -webkit-clip-path: polygon(0 100%,100% 100%,100% 0,0 0);
+    clip-path: polygon(0 100%,100% 100%,100% 0,0 0);
+}
+@media all and (max-width:1200px){
+    .main{
+        background-position: right;
+        background-image: url(../img/bg.png), url(../img/bg_only_map.png);
+    }
+}
+@media all and (max-width:767px){
+    .main{
+        background-position: center;
+    }
+/*
+    .text .sub p{
+        word-break: keep-all;
+        display: initial;
+    }
+*/
+    .main .text{
+        padding: 50px 0px 100px 0;
+    }
+    .standard , .dialect{
+        float: none; width: 100%;
+    }
+    .standard{
+        margin-bottom: 130px;
+    }
+    .trans-form{
+        background-image: url(../img/trans_m.png);
+    }
+    .select{
+        width: 100%;
+    }
+}
