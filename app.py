@@ -53,7 +53,7 @@ def clean_text(txt:str)->list:
                 break
 
         if len(txt_.replace(',','').replace(' ','').strip())>0:
-            txt_ = txt_.replace(' ,', ',').replace(',', ', ')
+            
             if len(txt_) >= max_len:
                 start = 0
                 while True:

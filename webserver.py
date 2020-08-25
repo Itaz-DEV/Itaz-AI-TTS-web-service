@@ -7,5 +7,5 @@ print("\nCurrent working directory: ---'{}'---\n".format(os.getcwd()))
 application = app.app
 
 if __name__ == '__main__':
-   serve(app.app, host='0.0.0.0')
+   serve(app.app, host='0.0.0.0', port=1000)
    #application.run(host='0.0.0.0')
