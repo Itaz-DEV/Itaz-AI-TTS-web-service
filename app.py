@@ -12,6 +12,12 @@ from flask import Flask, render_template, request
 from translation import Korean2Dialect
 from speech_synthesis import Text2Speech
 
+from koalanlp import API
+from koalanlp.proc import SentenceSplitter
+from koalanlp.Util import initialize, finalize
+#### split paragraph to list of sentences
+initialize(hnn="2.1.3")
+
 
 def clean_text(txt:str)->list:
     start_time= time.time()
@@ -26,20 +32,14 @@ def clean_text(txt:str)->list:
     ### transform special char to hangul
     for k,v in transform_dict.items():
         txt=txt.replace(k, v).replace(' .', '.').replace(' ?', '?').strip()
-    from koalanlp import API
-    from koalanlp.proc import SentenceSplitter
-    from koalanlp.Util import initialize, finalize
-    #### split paragraph to list of sentences
-    initialize(hnn="2.1.3")
     splitter = SentenceSplitter(api=API.HNN)
     paragraph = splitter(txt)
-    finalize()
     # return paragraph
     txt_list=[]
     import string
-    max_len=60
+    max_len=50
     for s in paragraph:
-        txt_ = s.translate(str.maketrans('', '', string.punctuation.replace(',','')))
+        txt_ = s.translate(str.maketrans('', '', string.punctuation.replace(',','').replace('.','')))
         txt_=txt_.strip()
 
         while True:
@@ -48,8 +48,14 @@ def clean_text(txt:str)->list:
             else:
                 break
 
+        while True:
+            if '..' in txt_:
+                txt_=txt_.replace('..','.')
+            else:
+                break
+
         if len(txt_.replace(',','').replace(' ','').strip())>0:
-            txt_ = txt_.replace(' ,', ',').replace(',', ', ')
+            
             if len(txt_) >= max_len:
                 start = 0
                 while True:
@@ -107,10 +113,12 @@ def ml_inference():
 
     korean = request.form['input-text']  # 표준어 Input
     dialect = korean2dialect.transform(korean)
+
     translated_length = len(korean) + int(len(korean) * 0.26)
 
     dialect = dialect[:translated_length] if len(dialect) > translated_length else dialect  # 번역
     print(f'translated text: {dialect}')
+    start=time.time()
     txt_list = clean_text(txt=dialect)  # 번역된 텍스트 클리닝
     print(f'cleaned text: {txt_list}')
     txt_list = txt_list[:4] if len(''.join(txt_list)) > translated_length else txt_list  # 번역

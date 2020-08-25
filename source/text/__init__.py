@@ -34,6 +34,7 @@ def number_to_hangul(text):
         if (number.replace(',','').replace('.','')).isnumeric():
             number_text = digit2txt(number)
             text = text.replace(number, number_text, 1)
+            text = text.replace(' ,', ',').replace(',', ', ')
     return text
 
 
