@@ -113,8 +113,7 @@ def ml_inference():
 
     korean = request.form['input-text']  # 표준어 Input
     dialect = korean2dialect.transform(korean)
-
-    translated_length = len(korean) + int(len(korean) * 0.26)
+    translated_length = int(len(korean)) * 1.5
 
     dialect = dialect[:translated_length] if len(dialect) > translated_length else dialect  # 번역
     print(f'translated text: {dialect}')
@@ -147,6 +146,7 @@ def ml_inference():
         torch.cuda.empty_cache()
         return res
 
+
 @app.route('/api-inference', methods=['POST'])
 def api_inference():
     total_time = time.time()
@@ -169,9 +169,9 @@ def api_inference():
         print(model_type)
         raise NotImplementedError
 
-    korean = data['input-text']  # 표준어 Input
+    korean = request.form['input-text']  # 표준어 Input
     dialect = korean2dialect.transform(korean)
-    translated_length = len(korean) + int(len(korean) * 0.26)
+    translated_length = int(len(korean)) * 1.5
 
     dialect = dialect[:translated_length] if len(dialect)> translated_length else dialect  # 번역
     print(f'translated text: {dialect}')

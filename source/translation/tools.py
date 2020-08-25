@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 import re
+import time
 import torch
 import torch.nn as nn
 
@@ -38,6 +39,49 @@ def change_hangle(token):
 def isHangle(sentence):
     hanCount = len(re.findall(u'[\u3130-\u318F\uAC00-\uD7A3]+', sentence))
     return hanCount > 0
+
+
+def split_sentence(sentence):
+    start = time.time()
+    tf = [False, False, False]      # 한글, 영어, 특수문자
+    if ord('가') <= ord(sentence[0]) <= ord('힣'):
+        tf[0] = True
+    elif ord('a') <= ord(sentence[0].lower()) <= ord('z'):
+        tf[1] = True
+    else:
+        tf[2] = True
+
+    lst = [sentence[0]]
+    for i in sentence[1:]:
+        if ord('가') <= ord(i) <= ord('힣'):
+            if tf[0]:
+                lst.append(i)
+                # tf[0], tf[2] = True, False
+            else:
+                lst.append(" ")
+                lst.append(i)
+                tf = [True, False, False]
+        elif ord('a') <= ord(i.lower()) <= ord('z'):
+            if tf[1]:
+                lst.append(i)
+                # tf[1], tf[2] = True, False
+            else:
+                lst.append(" ")
+                lst.append(i)
+                tf = [False, True, False]
+
+        elif i == " ":
+            lst.append(i)
+            tf = [False, False, False]
+        else:
+            if tf[2]:
+                lst.append(i)
+            else:
+                lst.append(" ")
+                lst.append(i)
+                tf = [False, False, True]
+    print('Split sentence time: {}'.format(time.time() - start))
+    return "".join(lst)
 
 
 class Translation(object):  # Usage
@@ -150,7 +194,7 @@ class Translation(object):  # Usage
                 return False
         if not is_english(sentence):    # 문장에 영어단어가 없으면 그대로 리턴
             return sentence
-
+        sentence = split_sentence(sentence)
         lst = WordPunctTokenizer().tokenize(sentence)
         for i in lst:
             if is_english(i):
