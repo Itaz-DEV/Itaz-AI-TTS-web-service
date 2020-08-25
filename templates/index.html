@@ -115,7 +115,7 @@
                         translated_text = response.translated_text
                         audio_stream = response.audio_stream
                         /////////// successfully calculated/////////////////
-                        document.getElementById("translated-results").innerHTML= translated_text +"'";
+                        document.getElementById("translated-results").innerHTML= translated_text;
                         console.log("translated_text:" + translated_text);
                         document.getElementById("audio-player").src = "data:audio/wav;base64,"+ audio_stream;
 

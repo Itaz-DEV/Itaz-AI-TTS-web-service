@@ -165,6 +165,56 @@ def ml_inference():
         torch.cuda.empty_cache()
         return res
 
+@app.route('/api-inference', methods=['POST'])
+def api_inference():
+    total_time = time.time()
+    print('====== Synthesizing ======')
+    data = request.get_json()
+    print(data)
+    gender = int(data['gender'])         # [0, 1] == ['남자', '여자']
+    model_type = int(data['model'])      # [0, 1, 2] = ['제주도', '경상도', '전라도]
+    # 사투리 결정
+    if model_type == 0:             # 제주도
+        korean2dialect = jeju_translation
+        text2speech = jeju_speech
+    elif model_type == 1:           # 경상도
+        korean2dialect = gyeong_translation
+        text2speech = gyeong_speech
+    elif model_type == 2:           # 전라도
+        korean2dialect = jeon_translation
+        text2speech = jeon_speech
+    else:
+        print(model_type)
+        raise NotImplementedError
+
+    korean = data['input-text']  # 표준어 Input
+    dialect = korean2dialect.transform(korean)
+    translated_length = len(korean) + int(len(korean) * 0.26)
+
+    dialect = dialect[:translated_length] if len(dialect)> translated_length else dialect  # 번역
+    print(f'translated text: {dialect}')
+    txt_list = clean_text(txt=dialect)  # 번역된 텍스트 클리닝
+    print(f'cleaned text: {txt_list}')
+    txt_list = txt_list[:4] if len(''.join(txt_list)) > translated_length else txt_list  # 번역
+
+    # try:
+    wav_file, error_log = text2speech.forward(txt_list)  # 텍스트 -> wav file
+    error_sentences = []
+    for k, v in error_log.items():
+        if v is True:
+            error_sentences.append(k)
+    error_sentences = '|'.join(error_sentences)
+    return_data = {'translated_text': dialect, 'audio_stream': wav_file}
+    res = app.response_class(response=json.dumps(return_data), status=200, mimetype='application/json')
+    ip = request.remote_addr
+    print('Total time(translation + synthesize): {}'.format(time.time() - total_time))
+    tts = TTS(dialect_type=model_type, korean=korean, dialect=dialect, ip=ip, error=error_sentences)
+    db.session.add(tts)
+    db.session.commit()
+    dialect, txt_list, wav_file, error_sentences, return_data, korean2dialect, text2speech = None, None, None, None, None, None, None
+    torch.cuda.empty_cache()
+    return res
+
 @app.route('/')
 def index():
     return render_template('index.html')
