@@ -159,7 +159,7 @@ def api_inference():
     print(data)
     gender = int(data['gender'])  # [0, 1] == ['남자', '여자']
     model_type = int(data['model'])  # [0, 1, 2] = ['제주도', '경상도', '전라도]
-    korean = request.form['input-text']  # 표준어 Input
+    korean = data['input-text']  # 표준어 Input
     res = tts_inference(gender, model_type, korean)
     return res
 
