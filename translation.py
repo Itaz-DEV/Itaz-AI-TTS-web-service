@@ -16,6 +16,7 @@ class Korean2Dialect(object):
 
     def transform(self, sentence):
         start = time.time()
+        sentence = ' '.join(sentence.split())
         token = sentence.split(' ')
         tmp = token[0]
         lst_gy = []
@@ -26,8 +27,8 @@ class Korean2Dialect(object):
                 else:
                     lst_gy.append(tmp)
             else:
-                for j in token[1:]:
-                    tmp = ' '.join([tmp, j])
+                for j in range(1, len(token)):
+                    tmp = ' '.join([tmp, token[j]])
                     if len(tmp) >= 35:
                         if count_space(tmp) > len(tmp) * 0.1:
                             lst_gy.append(self.translation.korean2dialect(self.model, tmp))
@@ -35,7 +36,7 @@ class Korean2Dialect(object):
                         else:
                             lst_gy.append(tmp)
                             tmp = ''
-                    elif j == token[-1]:
+                    elif j == len(token)-1:
                         lst_gy.append(self.translation.korean2dialect(self.model, tmp))
         output_sentence = ' '.join(lst_gy)
         print('Translation time: {}'.format(time.time() - start))

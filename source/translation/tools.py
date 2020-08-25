@@ -56,7 +56,7 @@ def split_sentence(sentence):
         if ord('가') <= ord(i) <= ord('힣'):
             if tf[0]:
                 lst.append(i)
-                # tf[0], tf[2] = True, False
+                tf = [True, False, False]
             else:
                 lst.append(" ")
                 lst.append(i)
@@ -64,7 +64,7 @@ def split_sentence(sentence):
         elif ord('a') <= ord(i.lower()) <= ord('z'):
             if tf[1]:
                 lst.append(i)
-                # tf[1], tf[2] = True, False
+                tf = [False, True, False]
             else:
                 lst.append(" ")
                 lst.append(i)
@@ -72,10 +72,11 @@ def split_sentence(sentence):
 
         elif i == " ":
             lst.append(i)
-            tf = [False, False, False]
+            tf = [True, True, True]
         else:
             if tf[2]:
                 lst.append(i)
+                tf = [False, False, True]
             else:
                 lst.append(" ")
                 lst.append(i)
@@ -89,9 +90,7 @@ class Translation(object):  # Usage
         self.checkpoint = torch.load(checkpoint)
         self.seq_len = 200
         self.beam_search = beam_search
-        if beam_search:
-            self.beam = Beam(beam_size=k, seq_len=self.seq_len)
-            self.k = k
+        self.k = k
         self.ko_voc, self.en_voc = create_or_get_voca(save_path=dictionary_path,
                                                       ko_vocab_size=self.checkpoint['encoder_parameter']['input_dim'],
                                                       di_vocab_size=self.checkpoint['decoder_parameter']['input_dim'],
@@ -131,7 +130,8 @@ class Translation(object):  # Usage
         return idx_list
 
     def korean2dialect(self, model, sentence: str) -> (str, torch.Tensor):
-        sentence = re.sub('[()]', '', sentence)
+        sentence = re.sub('[()]', ' ', sentence)
+        sentence = ' '.join(sentence.split())
         if not isHangle(sentence):
             if str.isdigit(sentence):
                 return self.transliteration(re.sub('[,]', '', sentence))
@@ -148,12 +148,10 @@ class Translation(object):  # Usage
         indices = output.view(-1, output.size(-1)).max(-1)[1].tolist()
         output_sentence = self.tensor2sentence_di(indices)[0]
         output_sentence = self.processing.post_processing(sentence, output_sentence)
-        if "<unk>" in output_sentence:      # Unk 발생시 원래문장 출력
+        if "<un>" in output_sentence:      # Unk 발생시 원래문장 출력
             return self.transliteration(sentence)
 
         output_sentence = self.transliteration(output_sentence)
-        print("Korean: ", sentence)  # input 출력
-        print("Predicted : ", output_sentence)  # output 출력
         return output_sentence
 
     def tensor2sentence_di(self, indices: torch.Tensor) -> list:

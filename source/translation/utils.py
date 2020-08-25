@@ -22,21 +22,21 @@ class PostProcessing:
             if unk_idx == 0:  # unk가 맨 앞에 있을 때
                 voca, start = self.first_unk(src, tar, unk_idx)
                 tar = voca + tar[start:]
-                if voca == "<unk>":
-                    print("First Unknown Error")
+                # if voca == "<un>":
+                #     print("First Unknown Error")
 
             elif unk_idx == len(tar) - 5:  # unk가 맨뒤에 있을 때
                 voca, end = self.last_unk(src, tar, unk_idx)
                 tar = tar[:end + 1] + voca
-                if voca == "<unk>":
-                    print("Last Unknown Error")
+                # if voca == "<un>":
+                #     print("Last Unknown Error")
             else:  # 맨앞, 맨뒤 모두 아닐 때
                 voca, start, end = self.middle_unk(src, tar, unk_idx)
                 tar = tar[:end+1] + voca + tar[start:]
-                if voca == "<unk>":
-                    print("Unknown Error")
-            if voca == "<unk>":
-                break
+                # if voca == "<un>":
+                #     print("Unknown Error")
+            # if voca == "<un>":
+            #     break
         return tar
 
     def first_unk(self, src, tar, unk_idx):
@@ -47,7 +47,7 @@ class PostProcessing:
             return pre_voca, start
         src_idx = src.find(token)
         if src_idx == -1:
-            return "<unk>", 0
+            return "<un>", 0
         else:
             voca = src[:src_idx]
             return voca, start
@@ -57,7 +57,7 @@ class PostProcessing:
         token = tar[end - 4:end + 1]
         src_idx = src.find(token)
         if src_idx == -1:
-            return "<unk>", end - 1
+            return "<un>", end - 1
         else:
             voca = src[src_idx + len(token):]
             return voca, end
@@ -85,7 +85,7 @@ class PostProcessing:
         post_idx = src.find(post_token)
 
         if pre_idx == -1 or post_idx == -1:  # 해당 token이 source 문장에 없을 경우
-            voca = "<unk>"
+            voca = "<un>"
             return voca, start, end
         voca = src[pre_idx + len(pre_token):post_idx]
         return voca, start, end
