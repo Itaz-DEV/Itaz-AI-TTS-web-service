@@ -179,24 +179,29 @@ def api_inference():
     print(f'cleaned text: {txt_list}')
     txt_list = txt_list[:4] if len(''.join(txt_list)) > translated_length else txt_list  # 번역
 
-    # try:
-    wav_file, error_log = text2speech.forward(txt_list)  # 텍스트 -> wav file
-    error_sentences = []
-    for k, v in error_log.items():
-        if v is True:
-            error_sentences.append(k)
-    error_sentences = '|'.join(error_sentences)
-    return_data = {'translated_text': dialect, 'audio_stream': wav_file}
-    res = app.response_class(response=json.dumps(return_data), status=200, mimetype='application/json')
-    ip = request.remote_addr
-    print('Total time(translation + synthesize): {}'.format(time.time() - total_time))
-    tts = TTS(dialect_type=model_type, korean=korean, dialect=dialect, ip=ip, error=error_sentences)
-    db.session.add(tts)
-    db.session.commit()
-    dialect, txt_list, wav_file, error_sentences, return_data, korean2dialect, text2speech = None, None, None, None, None, None, None
-    torch.cuda.empty_cache()
-    return res
-
+    try:
+        wav_file, error_log = text2speech.forward(txt_list)  # 텍스트 -> wav file
+        error_sentences = []
+        for k, v in error_log.items():
+            if v is True:
+                error_sentences.append(k)
+        error_sentences = '|'.join(error_sentences)
+        return_data = {'translated_text': dialect, 'audio_stream': wav_file}
+        res = app.response_class(response=json.dumps(return_data), status=200, mimetype='application/json')
+        ip = request.remote_addr
+        print('Total time(translation + synthesize): {}'.format(time.time() - total_time))
+        tts = TTS(dialect_type=model_type, korean=korean, dialect=dialect, ip=ip, error=error_sentences)
+        db.session.add(tts)
+        db.session.commit()
+        dialect, txt_list, wav_file, error_sentences, return_data, korean2dialect, text2speech = None, None, None, None, None, None, None
+        torch.cuda.empty_cache()
+        return res
+    except Exception as e:
+        print(e)
+        dialect, txt_list, wav_file, error_sentences, return_data, korean2dialect, text2speech = None, None, None, None, None, None, None
+        res = app.response_class(response=None, status=500, mimetype='application/json')
+        torch.cuda.empty_cache()
+        return res
 @app.route('/')
 def index():
     return render_template('index.html')
