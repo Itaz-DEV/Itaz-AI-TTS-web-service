@@ -13,35 +13,8 @@ from translation import Korean2Dialect
 from speech_synthesis import Text2Speech
 
 
-def uri_mapping(speaker: str, model_type: str) -> str:
-    uri = 'source/outdir'
-    if speaker.strip() == '남성':
-        uri += '/male'
-    elif speaker.strip() == '여성':
-        uri += '/female'
-    else:
-        print('speaker {}'.format(speaker))
-        print('uri {}'.format(uri))
-        raise NotImplementedError("speaker is not implemented")
-
-    if model_type.strip() == '표준어':
-        uri += '/standard'
-    elif model_type.strip() == '제주도':
-        uri += '/jeju'
-    elif model_type.strip() == '경상도':
-        uri += '/gyeongsangdo'
-    elif model_type.strip() == '북한':
-        uri += '/north_korea'
-    elif model_type.strip() == '전라도':
-        uri += '/jeonrado'
-    else:
-        print('uri {}'.format(uri))
-        print('model_type {}'.format(model_type))
-        raise NotImplementedError("model type is not implemented")
-
-
-
 def clean_text(txt:str)->list:
+    start_time= time.time()
     ### transform english char to korean text
     transform_dict = {'a':'에이','b':'비','c':'시','d':'디','e':'이','f':'에프','g':'지','h':'에이치','i':'아이','j':'제이','k':'케이','l':'엘','m':'엠',
                       'n':'엔','o':'오','p':'피', 'q':'큐','r':'아르','s':'에스','t':'티','u':'유','v':'브이','w':'더블유','x':'엑스','y':'와이','z':'제트',
@@ -92,6 +65,7 @@ def clean_text(txt:str)->list:
                 if not (txt_.endswith('.') or txt_.endswith('?') or txt_.endswith('!')):
                     txt_ = txt_ + '.'
                 txt_list.append(txt_.strip())
+    print('Cleaning Text time: {}'.format(time.time() - start_time))
     return txt_list
 
 

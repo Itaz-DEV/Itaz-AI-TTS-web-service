@@ -1,5 +1,10 @@
 import time
+import torch
 from source.translation.tools import Translation
+
+
+def count_space(sentence):
+    return sentence.count(' ')
 
 
 class Korean2Dialect(object):
@@ -10,29 +15,28 @@ class Korean2Dialect(object):
         self.model = self.translation.model_load()
 
     def transform(self, sentence):
+        start = time.time()
         token = sentence.split(' ')
         tmp = token[0]
         lst_gy = []
-        if len(token) ==1:
-            lst_gy.append(self.translation.korean2dialect(self.model, tmp))
-        else:
-            for j in token[1:]:
-                tmp = ' '.join([tmp, j])
-                if len(tmp) >= 35:
+        with torch.no_grad():
+            if len(token) == 1:
+                if count_space(tmp) > 0:
                     lst_gy.append(self.translation.korean2dialect(self.model, tmp))
-                    tmp = ''
-                elif j == token[-1]:
-                    lst_gy.append(self.translation.korean2dialect(self.model, tmp))
-        # txt = self.translation.korean2dialect(self.model, sentence)
-        return ' '.join(lst_gy)
-
-
-if __name__ == '__main__':
-    translation = Translation(checkpoint='source/translation/Model//gyeong/best_transformer.pth',
-                              dictionary_path='source/translation//Dictionary/gyeong',
-                              beam_search=True, k=5, region="gyeong")
-    model = translation.model_load()
-    start = time.time()
-    output = translation.korean2dialect(model, "계좌번호를 알려주시면 바로 입금하고 확인해 드릴게요.")
-    end = time.time() - start
-    print("time: ", str(end))
+                else:
+                    lst_gy.append(tmp)
+            else:
+                for j in token[1:]:
+                    tmp = ' '.join([tmp, j])
+                    if len(tmp) >= 35:
+                        if count_space(tmp) > len(tmp) * 0.1:
+                            lst_gy.append(self.translation.korean2dialect(self.model, tmp))
+                            tmp = ''
+                        else:
+                            lst_gy.append(tmp)
+                            tmp = ''
+                    elif j == token[-1]:
+                        lst_gy.append(self.translation.korean2dialect(self.model, tmp))
+        output_sentence = ' '.join(lst_gy)
+        print('Translation time: {}'.format(time.time() - start))
+        return output_sentence
