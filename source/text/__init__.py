@@ -168,7 +168,6 @@ def hangul_to_sequence(hangul_text):
     hangul_text_ = date_to_hangul(hangul_text)
     hangul_text_ = number_to_hangul(hangul_text_)
     hangul_text_ = clean_text(hangul_text_)
-    print(f'2 stage cleaning text {hangul_text_}')
     ### add end of sentence symbol
     hangul_text_ = hangul_text_ + u"␃"  # ␃: EOS
     ### get dictionary of chars
