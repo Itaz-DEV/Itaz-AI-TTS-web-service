@@ -137,7 +137,6 @@ def digit2txt(strNum):
 #     return hangul_to_ids, ids_to_hangul
 #
 #
-
 def clean_text(txt: str) -> list:
     ### transform english char to korean text
     transform_dict = {'a': '에이', 'b': '비', 'c': '시', 'd': '디', 'e': '이', 'f': '에프', 'g': '지', 'h': '에이치', 'i': '아이',
@@ -152,9 +151,14 @@ def clean_text(txt: str) -> list:
     txt = txt.lower().strip()
     ### transform special char to hangul
     for k, v in transform_dict.items():
-        txt = txt.replace(k, v).replace(' .', '.').replace(' ?', '?').replace(' !', '!').replace('.', '. ').replace('?', '? ').replace('!', '! ').strip()
+        txt = txt.replace(k, v)
+    txt = txt.replace(' .', '.').replace(' ?', '?').replace(' !', '!').replace('.', '. ').replace('?', '? ').replace('!', '! ').strip()
+    while True:
+        if '  ' in txt:
+            txt = txt.replace('  ', ' ')
+        else:
+            break
     return txt
-
 
 
 
@@ -164,6 +168,7 @@ def hangul_to_sequence(hangul_text):
     hangul_text_ = date_to_hangul(hangul_text)
     hangul_text_ = number_to_hangul(hangul_text_)
     hangul_text_ = clean_text(hangul_text_)
+    print(f'2 stage cleaning text {hangul_text_}')
     ### add end of sentence symbol
     hangul_text_ = hangul_text_ + u"␃"  # ␃: EOS
     ### get dictionary of chars

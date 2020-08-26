@@ -112,10 +112,10 @@ def tts_inference(gender, model_type, korean):
     # dialect = korean
     translated_length = int(len(korean) * 2)
     dialect = dialect[:translated_length] if len(dialect) > translated_length else dialect  # 번역
-
+    print(f'translated text: {dialect}')
     txt_list = clean_text(txt=dialect)  # 번역된 텍스트 클리닝
     txt_list = txt_list[:4] if len(''.join(txt_list)) > translated_length else txt_list  # 번역
-    print(txt_list)
+    print(f'first stage cleaning and splitted text: {txt_list}')
     try:
         wav_file, error_log = text2speech.forward(txt_list)  # 텍스트 -> wav file
         error_sentences = []

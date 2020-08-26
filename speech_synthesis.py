@@ -111,6 +111,7 @@ class Text2Speech(object):
         # preset_mels = load_preset_mel('source/filelists/preset')
 
         for i, text in enumerate(txt_list):
+            print(f'input text {text}')
             torch.cuda.empty_cache()
             sequence = np.array(hangul_to_sequence(text))[None, :]
             sequence_length = len(text)
