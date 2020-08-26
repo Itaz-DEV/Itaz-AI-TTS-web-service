@@ -32,7 +32,7 @@ def clean_text(txt: str) -> list:
     import string
     max_len = 60
     s=txt
-    txt_ = s.translate(str.maketrans('', '', string.punctuation.replace(',', '').replace('.', '').replace('?', '').replace('!', '').replace('-', '').replace('/', '')))
+    txt_ = s.translate(str.maketrans('', '', string.punctuation.replace(',', '').replace('.', '').replace('-', '').replace('/', '')))
     txt_ = txt_.strip()
 
     while True:
@@ -44,6 +44,18 @@ def clean_text(txt: str) -> list:
     while True:
         if '..' in txt_:
             txt_ = txt_.replace('..', '.')
+        else:
+            break
+
+    while True:
+        if ',,' in txt_:
+            txt_ = txt_.replace('--', '-')
+        else:
+            break
+
+    while True:
+        if '..' in txt_:
+            txt_ = txt_.replace('//', '/')
         else:
             break
 
