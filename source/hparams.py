@@ -48,7 +48,7 @@ def create_hparams(hparams_string=None, verbose=False):
         symbols_embedding_dim=512,
         checkpoint_path_jeju="source/outdir/male/jeju/checkpoint_70056",
         checkpoint_path_gyeongsang="source/outdir/male/gyeongsang/checkpoint_58000",
-        checkpoint_path_jeon="source/outdir/female/jeon/checkpoint_28000",
+        checkpoint_path_jeon="source/outdir/male/gyeongsang/checkpoint_58000",
         waveglow_jeju_path='source/outdir/male/gyeongsang/waveglow_gyeongsang_266000',
         waveglow_gyeongsang_path=r'source/outdir/male/gyeongsang/waveglow_gyeongsang_266000',
         waveglow_jeon_path=r'source/outdir/male/jeju/waveglow_146000',
