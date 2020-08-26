@@ -12,69 +12,68 @@ from flask import Flask, render_template, request
 from translation import Korean2Dialect
 from speech_synthesis import Text2Speech
 
-from koalanlp import API
-from koalanlp.proc import SentenceSplitter
-from koalanlp.Util import initialize, finalize
+# from koalanlp import API
+# from koalanlp.proc import SentenceSplitter
+# from koalanlp.Util import initialize, finalize
+#
+# try:
+#     #### split paragraph to list of sentences
+#     initialize(hnn="2.1.3")
+# except OSError:
+#     pass
 
-#### split paragraph to list of sentences
-initialize(hnn="2.1.3")
 
 
 def clean_text(txt: str) -> list:
     start_time = time.time()
-    ### transform english char to korean text
-    transform_dict = {'a': '에이', 'b': '비', 'c': '시', 'd': '디', 'e': '이', 'f': '에프', 'g': '지', 'h': '에이치', 'i': '아이',
-                      'j': '제이', 'k': '케이', 'l': '엘', 'm': '엠',
-                      'n': '엔', 'o': '오', 'p': '피', 'q': '큐', 'r': '아르', 's': '에스', 't': '티', 'u': '유', 'v': '브이',
-                      'w': '더블유', 'x': '엑스', 'y': '와이', 'z': '제트',
-                      u"'": u'"', '(': ', ', ')': ', ', '#': '샵', '%': '프로', '@': '고팽이', '+': '더하기', '-': '빼기',
-                      ':': '나누기', '*': '별'}
-    ### remove not allowed chars
-    not_allowed_characters = list('^~')
-    txt = ''.join(i for i in txt if not i in not_allowed_characters)
-    txt = txt.lower().strip()
-    ### transform special char to hangul
-    for k, v in transform_dict.items():
-        txt = txt.replace(k, v).replace(' .', '.').replace(' ?', '?').strip()
-    splitter = SentenceSplitter(api=API.HNN)
-    paragraph = splitter(txt)
+    # splitter = SentenceSplitter(api=API.HNN)
+    # paragraph = splitter(txt)
     # return paragraph
     txt_list = []
     import string
     max_len = 50
-    for s in paragraph:
-        txt_ = s.translate(str.maketrans('', '', string.punctuation.replace(',', '').replace('.', '')))
-        txt_ = txt_.strip()
+    s=txt
+    txt_ = s.translate(str.maketrans('', '', string.punctuation.replace(',', '').replace('.', '').replace('?', '').replace('!', '').replace('-', '').replace('/', '')))
+    txt_ = txt_.strip()
 
-        while True:
-            if ',,' in txt_:
-                txt_ = txt_.replace(',,', ',')
-            else:
-                break
+    while True:
+        if ',,' in txt_:
+            txt_ = txt_.replace(',,', ',')
+        else:
+            break
 
-        while True:
-            if '..' in txt_:
-                txt_ = txt_.replace('..', '.')
-            else:
-                break
+    while True:
+        if '..' in txt_:
+            txt_ = txt_.replace('..', '.')
+        else:
+            break
 
-        if len(txt_.replace(',', '').replace(' ', '').strip()) > 0:
-
-            if len(txt_) >= max_len:
-                start = 0
-                while True:
-                    if start >= len(txt_):
-                        break
+    if len(txt_.replace(',', '').replace(' ', '').strip()) > 0:
+        if len(txt_) >= max_len:
+            start = 0
+            while True:
+                if start >= len(txt_):
+                    break
+                else:
+                    if len(txt_) >= start + max_len + 1:
+                        while True:
+                            if txt_[start+max_len] ==' ' or txt_[start+max_len] =='?' or txt_[start+max_len] ==',' or txt_[start+max_len] =='.' or txt_[start+max_len] =='!':
+                                sub_txt = txt_[start:start + max_len]
+                                start += max_len
+                                max_len=50
+                                break
+                            else:
+                                max_len = max_len - 1
                     else:
                         sub_txt = txt_[start:start + max_len]
                         start += max_len
-                        if not (sub_txt.endswith('.') or sub_txt.endswith('?') or sub_txt.endswith('!')):
-                            sub_txt = sub_txt + '.'
-                        txt_list.append(sub_txt.strip())
-            else:
-                if not (txt_.endswith('.') or txt_.endswith('?') or txt_.endswith('!')):
-                    txt_ = txt_ + '.'
-                txt_list.append(txt_.strip())
+                    if not (sub_txt.endswith('.') or sub_txt.endswith('?') or sub_txt.endswith('!')):
+                        sub_txt = sub_txt + '.'
+                    txt_list.append(sub_txt.strip())
+        else:
+            if not (txt_.endswith('.') or txt_.endswith('?') or txt_.endswith('!')):
+                txt_ = txt_ + '.'
+            txt_list.append(txt_.strip())
     print('Cleaning Text time: {}'.format(time.time() - start_time))
     return txt_list
 
@@ -110,12 +109,13 @@ def tts_inference(gender, model_type, korean):
         raise NotImplementedError
 
     dialect = korean2dialect.transform(korean)
+    # dialect = korean
     translated_length = int(len(korean) * 2)
     dialect = dialect[:translated_length] if len(dialect) > translated_length else dialect  # 번역
 
     txt_list = clean_text(txt=dialect)  # 번역된 텍스트 클리닝
     txt_list = txt_list[:4] if len(''.join(txt_list)) > translated_length else txt_list  # 번역
-
+    print(txt_list)
     try:
         wav_file, error_log = text2speech.forward(txt_list)  # 텍스트 -> wav file
         error_sentences = []

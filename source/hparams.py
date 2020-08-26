@@ -33,7 +33,7 @@ def create_hparams(hparams_string=None, verbose=False):
         # Audio Parameters             #
         ################################
         max_wav_value=32768.0,
-        sampling_rate=22050,
+        sampling_rate=23050,
         filter_length=1024,
         hop_length=256,
         win_length=1024,
@@ -48,7 +48,7 @@ def create_hparams(hparams_string=None, verbose=False):
         symbols_embedding_dim=512,
         checkpoint_path_jeju="source/outdir/male/jeju/checkpoint_70056",
         checkpoint_path_gyeongsang="source/outdir/male/gyeongsang/checkpoint_58000",
-        checkpoint_path_jeon="source/outdir/male/gyeongsang/checkpoint_58000",
+        checkpoint_path_jeon="source/outdir/female/jeon/checkpoint_28000",
         waveglow_jeju_path='source/outdir/male/gyeongsang/waveglow_gyeongsang_266000',
         waveglow_gyeongsang_path=r'source/outdir/male/gyeongsang/waveglow_gyeongsang_266000',
         waveglow_jeon_path=r'source/outdir/male/jeju/waveglow_146000',

@@ -98,9 +98,9 @@ class Text2Speech(object):
         return wav_file, error
 
     def create_silent(self):
-        silent = torch.zeros(torch.Size([70, 80, 1]),
+        silent = torch.zeros(torch.Size([40, 80, 1]),
                              dtype=torch.half).cuda() if self.hparams.fp16_run else torch.zeros(
-            torch.Size([70, 80, 1]), dtype=torch.float).cuda()
+            torch.Size([40, 80, 1]), dtype=torch.float).cuda()
         silent = torch.add(silent, -12)
         return silent
 
