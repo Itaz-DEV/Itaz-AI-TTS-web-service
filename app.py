@@ -31,7 +31,7 @@ def clean_text(txt: str) -> list:
     # return paragraph
     txt_list = []
     import string
-    max_len = 50
+    max_len = 30
     s=txt
     txt_ = s.translate(str.maketrans('', '', string.punctuation.replace(',', '').replace('.', '').replace('?', '').replace('!', '').replace('-', '').replace('/', '')))
     txt_ = txt_.strip()
