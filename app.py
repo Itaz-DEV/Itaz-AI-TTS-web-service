@@ -23,7 +23,6 @@ from speech_synthesis import Text2Speech
 #     pass
 
 
-
 def clean_text(txt: str) -> list:
     start_time = time.time()
     # splitter = SentenceSplitter(api=API.HNN)
@@ -59,17 +58,23 @@ def clean_text(txt: str) -> list:
                         while True:
                             if txt_[start+max_len] ==' ' or txt_[start+max_len] =='?' or txt_[start+max_len] ==',' or txt_[start+max_len] =='.' or txt_[start+max_len] =='!':
                                 sub_txt = txt_[start:start + max_len]
+                                if len(sub_txt.translate(str.maketrans('', '', string.punctuation))) > 0:
+                                    if not (sub_txt.endswith('.') or sub_txt.endswith('?') or sub_txt.endswith('!')):
+                                        sub_txt = sub_txt + '.'
+                                    txt_list.append(sub_txt.strip())
+
                                 start += max_len
-                                max_len=50
+                                max_len=60
                                 break
                             else:
                                 max_len = max_len - 1
                     else:
                         sub_txt = txt_[start:start + max_len]
                         start += max_len
-                    if not (sub_txt.endswith('.') or sub_txt.endswith('?') or sub_txt.endswith('!')):
-                        sub_txt = sub_txt + '.'
-                        if len(sub_txt.translate(str.maketrans('', '', string.punctuation)))>0:
+
+                        if len(sub_txt.translate(str.maketrans('', '', string.punctuation))) > 0:
+                            if not (sub_txt.endswith('.') or sub_txt.endswith('?') or sub_txt.endswith('!')):
+                                sub_txt = sub_txt + '.'
                             txt_list.append(sub_txt.strip())
         else:
             if not (txt_.endswith('.') or txt_.endswith('?') or txt_.endswith('!')):
@@ -116,7 +121,6 @@ def tts_inference(gender, model_type, korean):
     print(f'translated text: {dialect}')
     txt_list = clean_text(txt=dialect)  # 번역된 텍스트 클리닝
     txt_list = txt_list[:4] if len(''.join(txt_list)) > translated_length else txt_list  # 번역
-    print(f'first stage cleaning and splitted text: {txt_list}')
     try:
         wav_file, error_log = text2speech.forward(txt_list)  # 텍스트 -> wav file
         error_sentences = []
