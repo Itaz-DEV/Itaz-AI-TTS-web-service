@@ -31,7 +31,7 @@ def clean_text(txt: str) -> list:
     # return paragraph
     txt_list = []
     import string
-    max_len = 30
+    max_len = 60
     s=txt
     txt_ = s.translate(str.maketrans('', '', string.punctuation.replace(',', '').replace('.', '').replace('?', '').replace('!', '').replace('-', '').replace('/', '')))
     txt_ = txt_.strip()
@@ -69,7 +69,8 @@ def clean_text(txt: str) -> list:
                         start += max_len
                     if not (sub_txt.endswith('.') or sub_txt.endswith('?') or sub_txt.endswith('!')):
                         sub_txt = sub_txt + '.'
-                    txt_list.append(sub_txt.strip())
+                        if len(sub_txt.translate(str.maketrans('', '', string.punctuation)))>0:
+                            txt_list.append(sub_txt.strip())
         else:
             if not (txt_.endswith('.') or txt_.endswith('?') or txt_.endswith('!')):
                 txt_ = txt_ + '.'
