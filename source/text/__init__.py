@@ -137,7 +137,7 @@ def digit2txt(strNum):
 #     return hangul_to_ids, ids_to_hangul
 #
 #
-def clean_text(txt: str) -> list:
+def clean_text(txt):
     ### transform english char to korean text
     transform_dict = {'a': '에이', 'b': '비', 'c': '시', 'd': '디', 'e': '이', 'f': '에프', 'g': '지', 'h': '에이치', 'i': '아이',
                       'j': '제이', 'k': '케이', 'l': '엘', 'm': '엠',
@@ -168,7 +168,6 @@ def hangul_to_sequence(hangul_text):
     hangul_text_ = date_to_hangul(hangul_text)
     hangul_text_ = number_to_hangul(hangul_text_)
     hangul_text_ = clean_text(hangul_text_)
-    print(f'cleanned text: {hangul_text_}')
     ### add end of sentence symbol
     hangul_text_ = hangul_text_ + u"␃"  # ␃: EOS
     ### get dictionary of chars
