@@ -22,7 +22,6 @@ from speech_synthesis import Text2Speech
 # except OSError:
 #     pass
 
-txt='ȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣ!  '
 def clean_text(txt: str) -> list:
     start_time = time.time()
     # splitter = SentenceSplitter(api=API.HNN)
