@@ -138,7 +138,7 @@ def tts_inference(gender, model_type, korean):
 
     dialect = korean2dialect.transform(korean)
     # dialect = korean
-    translated_length = int(len(korean) * 2)
+    translated_length = min(200,int(len(korean) * 2))
     dialect = dialect[:translated_length] if len(dialect) > translated_length else dialect  # 번역
     print(f'translated text: {dialect}')
     txt_list = clean_text(txt=dialect)  # 번역된 텍스트 클리닝
