@@ -147,7 +147,7 @@ def clean_text(txt):
                       u"'": u'"', '(': ', ', ')': ', ', '#': '샵', '%': '프로', '@': '고팽이', '+': '더하기', '-': '빼기',
                       ':': '나누기', '*': '별'}
     ### remove not allowed chars
-    not_allowed_characters = list('^~‘')
+    not_allowed_characters = list('^~‘’')
     txt = ''.join(i for i in txt if not i in not_allowed_characters)
     txt = txt.lower().strip()
     ### transform special char to hangul
