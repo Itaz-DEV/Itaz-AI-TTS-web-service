@@ -22,7 +22,7 @@ from speech_synthesis import Text2Speech
 # except OSError:
 #     pass
 
-
+txt='ȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣȣ!  '
 def clean_text(txt: str) -> list:
     start_time = time.time()
     # splitter = SentenceSplitter(api=API.HNN)
@@ -68,7 +68,20 @@ def clean_text(txt: str) -> list:
                 else:
                     if len(txt_) >= start + max_len + 1:
                         while True:
-                            if txt_[start+max_len] ==' ' or txt_[start+max_len] =='?' or txt_[start+max_len] ==',' or txt_[start+max_len] =='.' or txt_[start+max_len] =='!':
+                            if max_len>=50:
+                                if txt_[start+max_len] ==' ' or txt_[start+max_len] =='?' or txt_[start+max_len] ==',' or txt_[start+max_len] =='.' or txt_[start+max_len] =='!':
+                                    sub_txt = txt_[start:start + max_len]
+                                    if len(sub_txt.translate(str.maketrans('', '', string.punctuation))) > 0:
+                                        if not (sub_txt.endswith('.') or sub_txt.endswith('?') or sub_txt.endswith('!')):
+                                            sub_txt = sub_txt + '.'
+                                        txt_list.append(sub_txt.strip())
+
+                                    start += max_len
+                                    max_len=60
+                                    break
+                                else:
+                                    max_len = max_len - 1
+                            else:
                                 sub_txt = txt_[start:start + max_len]
                                 if len(sub_txt.translate(str.maketrans('', '', string.punctuation))) > 0:
                                     if not (sub_txt.endswith('.') or sub_txt.endswith('?') or sub_txt.endswith('!')):
@@ -76,10 +89,8 @@ def clean_text(txt: str) -> list:
                                     txt_list.append(sub_txt.strip())
 
                                 start += max_len
-                                max_len=60
+                                max_len = 60
                                 break
-                            else:
-                                max_len = max_len - 1
                     else:
                         sub_txt = txt_[start:start + max_len]
                         start += max_len
