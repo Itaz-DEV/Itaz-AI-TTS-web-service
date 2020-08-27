@@ -137,7 +137,6 @@ def digit2txt(strNum):
 #     return hangul_to_ids, ids_to_hangul
 #
 #
-txt='록스의 ‘표준어 사투리 번역 TTS’는 딥러닝 기반의 TTS(Text to Speech) 서비스 입니다.'
 def clean_text(txt):
     ### transform english char to korean text
     transform_dict = {'a': '에이', 'b': '비', 'c': '시', 'd': '디', 'e': '이', 'f': '에프', 'g': '지', 'h': '에이치', 'i': '아이',
@@ -147,8 +146,8 @@ def clean_text(txt):
                       u"'": u'"', '(': ', ', ')': ', ', '#': '샵', '%': '프로', '@': '고팽이', '+': '더하기', '-': '빼기',
                       ':': '나누기', '*': '별'}
     ### remove not allowed chars
-    not_allowed_characters = list('^~‘’')
-    txt = ''.join(i for i in txt if not i in not_allowed_characters)
+    # not_allowed_characters = list('^~‘’')
+    # txt = ''.join(i for i in txt if not i in not_allowed_characters)
     txt = txt.lower().strip()
     ### transform special char to hangul
     for k, v in transform_dict.items():
@@ -184,8 +183,10 @@ def hangul_to_sequence(hangul_text):
             if char in symbols:
                 sequence.append(hangul_to_ids[char])
             else:
-                print(char)
-                sequence.append(hangul_to_ids[symbols[hangul_symbol_hcj.index(char)]])
+                try:
+                    sequence.append(hangul_to_ids[symbols[hangul_symbol_hcj.index(char)]])
+                except Exception as e:
+                    continue
     except KeyError as e:
         raise KeyError('KeyError (at key: {}) when processing: {}'.format(e,hangul_text))
     return sequence
