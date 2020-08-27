@@ -1,4 +1,5 @@
 source/outdir
 source/db
 source/translation/Model/*
+source/translation/Dictionary/*
 *.wav
