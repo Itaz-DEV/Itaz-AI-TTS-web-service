@@ -1,13 +1,11 @@
 ﻿#-*- coding: utf-8 -*-
-import numpy as np
-import re
 from source.text import cleaners
 from jamo import h2j
 from itertools import chain
-
 import re
 from source.text import cleaners
 from source.text.symbols import symbols
+import string
 
 
 # Mappings from symbol to numeric ID and vice versa:
@@ -43,11 +41,10 @@ def date_to_hangul(text):
         text = text.replace(date_, date, 1)
     return text
 
-
 def number_to_hangul(text):
     temp_text= text
     for idx,char in enumerate(text):
-        if (not char.isnumeric()) and char!=',' and char!='.':
+        if (not char in string.digits) and char!=',' and char!='.':
             temp_text=temp_text.replace(temp_text[idx], '_')
     numbers = temp_text.split('_')
 
