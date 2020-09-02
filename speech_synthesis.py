@@ -116,6 +116,14 @@ class Text2Speech(object):
             sequence_length = len(text)
             sequence = torch.autograd.Variable(torch.from_numpy(sequence)).cuda().long()
             mel_outputs, mel_outputs_postnet, _, alignments = self.model.inference(sequence)
+            audio_length = mel_outputs_postnet.shape[-1] * hparams.hop_length / hparams.sampling_rate  #### by second
+            max_length = 46
+            if (audio_length >= max_length):
+                error[text] = True
+                from random import randint
+                mel_outputs_postnet = torch.FloatTensor(load_preset_mel(folder=r'source/preset_audio', id=randint(0,10))).unsqueeze(0)
+            else:
+                error[text] = False
             if i < len(txt_list) - 1:
                 mels = torch.cat(
                     [mels, mel_outputs_postnet.transpose(2, 0), silent]) if mels is not None else torch.cat(
@@ -123,16 +131,7 @@ class Text2Speech(object):
             else:
                 mels = torch.cat([mels, mel_outputs_postnet.transpose(2, 0)]) if mels is not None else torch.cat(
                     [mel_outputs_postnet.transpose(2, 0)])
-            audio_length = mel_outputs_postnet.shape[-1] * hparams.hop_length / hparams.sampling_rate #### by second
-            max_length = 46
-            # print(f'sequence_length {sequence_length}')
-            # print(f'audio length {audio_length}')
-            # print(f'pred_audio_length - np.sqrt(0.208) {pred_audio_length - 2}')
-            # print(f'pred_audio_length + np.sqrt(0.208) {pred_audio_length + 2}')
-            if (audio_length >= max_length):
-                error[text] = True
-            else:
-                error[text] = False
+
         print('Tacotron synthesize time: {}'.format(time.time() - start))
         del sequence, sequence_length, mel_outputs, mel_outputs_postnet, audio_length, max_length, alignments
         return mels, error
