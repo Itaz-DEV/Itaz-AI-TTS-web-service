@@ -50,11 +50,11 @@ def save_audio_to_mel(filename):
     np.save(f'{filename.replace(".wav", ".npy")}', np_melspec, allow_pickle=True)
     print(f'{filename.replace(".wav", ".npy")}')
 ### using this script to load audio and save as mel spectrogram
-import os
-for filename in os.listdir(r'source/preset_audio'):
-    if filename.endswith('.wav'):
-        f = os.path.join(r'source/preset_audio', filename)
-        save_audio_to_mel(f)
+# import os
+# for filename in os.listdir(r'source/preset_audio'):
+#     if filename.endswith('.wav'):
+#         f = os.path.join(r'source/preset_audio', filename)
+#         save_audio_to_mel(f)
 
 def load_preset_mel(folder, id=0):
     import os
@@ -63,7 +63,7 @@ def load_preset_mel(folder, id=0):
     for mel in os.listdir(folder):
         if mel.endswith('.npy'):
             mel_path = os.path.join(folder,mel)
-            np_mel = np.load(mel_path, allow_pickle=True)
+            np_mel = np.load(mel_path, allow_pickle=False)
             preset_mels.append(np_mel)
     return preset_mels[id]
 
@@ -127,9 +127,9 @@ class Text2Speech(object):
                 error[text] = True
                 from random import randint
                 if hparams.fp16_run:
-                    mel_outputs_postnet = torch.FloatTensor(load_preset_mel(folder=r'source/preset_audio', id=randint(0,10))).unsqueeze(0).cuda().half()
+                    mel_outputs_postnet = torch.from_numpy(load_preset_mel(folder=r'source/preset_audio', id=randint(0,10))).unsqueeze(0).cuda().half()
                 else:
-                    mel_outputs_postnet = torch.FloatTensor(load_preset_mel(folder=r'source/preset_audio', id=randint(0, 10))).unsqueeze(0).cuda().float()
+                    mel_outputs_postnet = torch.from_numpy(load_preset_mel(folder=r'source/preset_audio', id=randint(0, 10))).unsqueeze(0).cuda().float()
             else:
                 error[text] = False
 
