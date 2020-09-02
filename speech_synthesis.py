@@ -126,7 +126,10 @@ class Text2Speech(object):
             if (audio_length >= max_length):
                 error[text] = True
                 from random import randint
-                mel_outputs_postnet = torch.FloatTensor(load_preset_mel(folder=r'source/preset_audio', id=randint(0,10))).unsqueeze(0).cuda()
+                if hparams.fp16_run:
+                    mel_outputs_postnet = torch.FloatTensor(load_preset_mel(folder=r'source/preset_audio', id=randint(0,10))).unsqueeze(0).cuda().half()
+                else:
+                    mel_outputs_postnet = torch.FloatTensor(load_preset_mel(folder=r'source/preset_audio', id=randint(0, 10))).unsqueeze(0).cuda().float()
             else:
                 error[text] = False
 
