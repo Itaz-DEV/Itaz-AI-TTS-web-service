@@ -50,13 +50,13 @@ def save_audio_to_mel(filename):
     np.save(f'{filename.replace(".wav", ".npy")}', np_melspec, allow_pickle=True)
     print(f'{filename.replace(".wav", ".npy")}')
 ### using this script to load audio and save as mel spectrogram
-# import os
-# for filename in os.listdir(r'F:‚Nvidia-Tacotron‚temp_dir‚source‚filelists‚preset'):
-#     if filename.endswith('.wav'):
-#         f = os.path.join(r'F:‚Nvidia-Tacotron‚temp_dir‚source‚filelists‚preset', filename)
-#         save_audio_to_mel(f)
+import os
+for filename in os.listdir(r'source/preset_audio'):
+    if filename.endswith('.wav'):
+        f = os.path.join(r'source/preset_audio', filename)
+        save_audio_to_mel(f)
 
-def load_preset_mel(folder):
+def load_preset_mel(folder, id=0):
     import os
     import numpy as np
     preset_mels = []
@@ -65,7 +65,7 @@ def load_preset_mel(folder):
             mel_path = os.path.join(folder,mel)
             np_mel = np.load(mel_path, allow_pickle=True)
             preset_mels.append(np_mel)
-    return preset_mels
+    return preset_mels[id]
 
 class Text2Speech(object):
     def __init__(self, model_type):
@@ -116,14 +116,8 @@ class Text2Speech(object):
             sequence_length = len(text)
             sequence = torch.autograd.Variable(torch.from_numpy(sequence)).cuda().long()
             mel_outputs, mel_outputs_postnet, _, alignments = self.model.inference(sequence)
-            if i < len(txt_list) - 1:
-                mels = torch.cat(
-                    [mels, mel_outputs_postnet.transpose(2, 0), silent]) if mels is not None else torch.cat(
-                    [mel_outputs_postnet.transpose(2, 0), silent])
-            else:
-                mels = torch.cat([mels, mel_outputs_postnet.transpose(2, 0)]) if mels is not None else torch.cat(
-                    [mel_outputs_postnet.transpose(2, 0)])
-            audio_length = mel_outputs_postnet.shape[-1] * hparams.hop_length / hparams.sampling_rate #### by second
+            ### calculate audio length
+            audio_length = mel_outputs_postnet.shape[-1] * hparams.hop_length / hparams.sampling_rate  #### by second
             max_length = 46
             # print(f'sequence_length {sequence_length}')
             # print(f'audio length {audio_length}')
@@ -131,8 +125,19 @@ class Text2Speech(object):
             # print(f'pred_audio_length + np.sqrt(0.208) {pred_audio_length + 2}')
             if (audio_length >= max_length):
                 error[text] = True
+                from random import randint
+                mel_outputs_postnet = torch.FloatTensor(load_preset_mel(folder=r'source/preset_audio', id=randint(0,10))).unsqueeze(0)
             else:
                 error[text] = False
+
+            if i < len(txt_list) - 1:
+                mels = torch.cat(
+                    [mels, mel_outputs_postnet.transpose(2, 0), silent]) if mels is not None else torch.cat(
+                    [mel_outputs_postnet.transpose(2, 0), silent])
+            else:
+                mels = torch.cat([mels, mel_outputs_postnet.transpose(2, 0)]) if mels is not None else torch.cat(
+                    [mel_outputs_postnet.transpose(2, 0)])
+
         print('Tacotron synthesize time: {}'.format(time.time() - start))
         del sequence, sequence_length, mel_outputs, mel_outputs_postnet, audio_length, max_length, alignments
         return mels, error
