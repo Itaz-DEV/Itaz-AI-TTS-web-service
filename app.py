@@ -152,7 +152,7 @@ def tts_inference(gender, model_type, korean):
         error_sentences = '|'.join(error_sentences)
         return_data = {'translated_text': dialect, 'audio_stream': wav_file}
         res = app.response_class(response=json.dumps(return_data), status=200, mimetype='application/json')
-        ip = request.remote_addr
+        ip = request.headers.get('X-Forwarded-For', request.remote_addr)
         print('Total time(translation + synthesize): {}'.format(time.time() - total_time))
         tts = TTS(dialect_type=model_type, korean=korean, dialect=dialect, ip=ip, error=error_sentences)
         db.session.add(tts)
