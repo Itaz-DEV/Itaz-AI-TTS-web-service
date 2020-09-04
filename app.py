@@ -149,12 +149,12 @@ def tts_inference(gender, model_type, korean):
         res = app.response_class(response=json.dumps(return_data), status=200, mimetype='application/json')
         ip = request.headers.get('X-Forwarded-For', request.remote_addr)
         print('Total time(translation + synthesize): {}'.format(time.time() - total_time))
-        tts = TTS(dialect_type=model_type, korean=korean, dialect=dialect, ip=ip, error=error_sentences)
         try:
             from source.db.config import DB_URL
             from flask_sqlalchemy import SQLAlchemy
             from source.db.app import TTS
             app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
+            tts = TTS(dialect_type=model_type, korean=korean, dialect=dialect, ip=ip, error=error_sentences)
             db = SQLAlchemy(app)
             db.session.add(tts)
             db.session.commit()
