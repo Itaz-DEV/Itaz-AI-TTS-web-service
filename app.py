@@ -3,9 +3,6 @@ import sys
 import json
 import time
 import torch
-from source.db.config import DB_URL
-from flask_sqlalchemy import SQLAlchemy
-from source.db.app import TTS
 
 sys.path.append('source/waveglow/')
 from flask import Flask, render_template, request
@@ -108,8 +105,6 @@ def clean_text(txt: str) -> list:
 
 # =============================== define web app =======================================
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
-db = SQLAlchemy(app)
 
 jeju_translation = Korean2Dialect('jeju', beam_search=False, k=0)  # 제주 번역 클래스 선언
 gyeong_translation = Korean2Dialect('gyeong', beam_search=False, k=0)  # 경상 번역 클래스 선언
@@ -155,17 +150,26 @@ def tts_inference(gender, model_type, korean):
         ip = request.headers.get('X-Forwarded-For', request.remote_addr)
         print('Total time(translation + synthesize): {}'.format(time.time() - total_time))
         tts = TTS(dialect_type=model_type, korean=korean, dialect=dialect, ip=ip, error=error_sentences)
-        db.session.add(tts)
-        db.session.commit()
+        try:
+            from source.db.config import DB_URL
+            from flask_sqlalchemy import SQLAlchemy
+            from source.db.app import TTS
+            app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
+            db = SQLAlchemy(app)
+            db.session.add(tts)
+            db.session.commit()
+        except Exception as sql_e:
+            print(sql_e)
+            pass
         dialect, txt_list, wav_file, error_sentences, return_data, korean2dialect, text2speech = None, None, None, None, None, None, None
         torch.cuda.empty_cache()
-        return res
+
     except Exception as e:
         print(e)
         dialect, txt_list, wav_file, error_sentences, return_data, korean2dialect, text2speech = None, None, None, None, None, None, None
         res = app.response_class(response=None, status=500, mimetype='application/json')
         torch.cuda.empty_cache()
-        return res
+    return res
 
 
 @app.route('/ml-inference', methods=['POST'])
