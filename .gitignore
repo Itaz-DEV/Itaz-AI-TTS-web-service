@@ -3,6 +3,7 @@ source/db
 source/translation/Model/*
 source/translation/Dictionary/
 source/translation/Dictionary/*
+__pycache__
 *.wav
 *.png
 .java
