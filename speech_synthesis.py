@@ -85,7 +85,7 @@ class Text2Speech(object):
         silent = self.create_silent()
         mels, error = self.tacotron_synthesize(txt_list, silent)
         audio = self.wavenet_synthesize(mels)
-        audio = self.denoiser(audio, strength=0.08)[:, 0]
+        audio = self.denoiser(audio, strength=0.06)[:, 0]
         audio = audio[0].data.cpu().numpy()
 
         save_wav(path='output.wav', wav=audio, sr=hparams.sampling_rate)
