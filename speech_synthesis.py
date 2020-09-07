@@ -85,7 +85,7 @@ class Text2Speech(object):
         silent = self.create_silent()
         mels, error = self.tacotron_synthesize(txt_list, silent)
         audio = self.wavenet_synthesize(mels)
-        audio = self.denoiser(audio, strength=0.01)[:, 0]
+        audio = self.denoiser(audio, strength=0.08)[:, 0]
         audio = audio[0].data.cpu().numpy()
 
         save_wav(path='output.wav', wav=audio, sr=hparams.sampling_rate)
@@ -148,7 +148,7 @@ class Text2Speech(object):
     def wavenet_synthesize(self, mels):
         start = time.time()
         with torch.no_grad():
-            audio = self.waveglow.infer(mels.transpose(0, 2), sigma=0.666)
+            audio = self.waveglow.infer(mels.transpose(0, 2), sigma=0.6666)
         print('Wavenet synthesize time: {}'.format(time.time() - start))
         return audio
 
