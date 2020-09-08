@@ -97,7 +97,7 @@ class Translation(object):  # Usage
                                                       region=region)
         self.EOS_ID = self.ko_voc['</s>']  # 1 End Token
         self.processing = PostProcessing()
-        self.literation = Transliteration(checkpoint='source/translation/Model/transliteration/best_seq2seq.pth',
+        self.literation = Transliteration(checkpoint='source/translation/Model/transliteration/best_transformer.pth',
                                           dictionary_path='source/translation/Dictionary/transliteration/')
 
     def model_load(self):

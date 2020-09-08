@@ -137,3 +137,4 @@ source/translation/Dictionary/*
 *.wav
 *.png
 .java
+__pycache__

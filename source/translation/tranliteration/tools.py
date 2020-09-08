@@ -1,41 +1,41 @@
 # -*- coding:utf-8 -*-
-
+import os
 import torch
 import torch.nn as nn
 from source.translation.tranliteration.data_helper \
     import create_or_get_voca, sentence_to_token_ids
-from source.translation.tranliteration.model import Encoder, Decoder, Seq2Seq
+from source.translation.tranliteration.model import Encoder, Decoder,  Transformer, greedy_decoder, Greedy
 
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+os.environ["CUDA_VISIBLE_DEVICES"] = '0'
+device = torch.device(torch.cuda.current_device() if torch.cuda.is_available() else 'cpu')
+
 
 class Transliteration(object):  # Usage
-    def __init__(self, checkpoint, dictionary_path, x_path=None,  beam_search=False, k=1):
+    def __init__(self, checkpoint, dictionary_path, x_test_path=None, result_file=None, batch_size=1):
         self.checkpoint = torch.load(checkpoint)
         self.seq_len = self.checkpoint['seq_len']
-        self.batch_size = 20
-        self.x_path = x_path
-        self.beam_search = beam_search
-        self.k = k
         self.en_voc = create_or_get_voca(vocabulary_path=dictionary_path + "vocab40.en")
         self.ko_voc = create_or_get_voca(vocabulary_path=dictionary_path + "vocab1000.ko")
+        self.x_test_path = x_test_path
+        self.result_file = result_file
+        self.batch_size = batch_size
+        self.EOS_ID = self.ko_voc['</s>']  # 1 End Token
+        self.lines = []
+        self.greedy = None
         self.model = self.model_load()
 
     def model_load(self):
         encoder = Encoder(**self.checkpoint['encoder_parameter'])
         decoder = Decoder(**self.checkpoint['decoder_parameter'])
-        model = Seq2Seq(encoder, decoder, self.seq_len, beam_search=self.beam_search, k=self.k)
-        model = nn.DataParallel(model, device_ids=[0])
+        model = Transformer(encoder, decoder)
+        model = nn.DataParallel(model).cuda()
         model.load_state_dict(self.checkpoint['model_state_dict'])
         model.eval()
+        self.greedy = Greedy(model=model, seq_len=self.seq_len)
         return model
 
     def src_input(self, sentence):
         idx_list = sentence_to_token_ids(sentence, self.en_voc)
-        idx_list = self.padding(idx_list, self.ko_voc['<pad>'])
-        return torch.tensor([idx_list]).to(device)
-
-    def tar_input(self):
-        idx_list = [self.en_voc['<s>']]
         idx_list = self.padding(idx_list, self.ko_voc['<pad>'])
         return torch.tensor([idx_list]).to(device)
 
@@ -56,17 +56,14 @@ class Transliteration(object):  # Usage
             else:
                 break
         translation_sentence = ''.join(translation_sentence).strip()
+        while translation_sentence.find('<unk>') != -1:
+            translation_sentence = translation_sentence.replace("<unk>", " ")
         return translation_sentence
 
     def transform(self, sentence: str) -> (str, torch.Tensor):
-        src_input = self.src_input(sentence)
-        tar_input = self.tar_input()
-        output = self.model(src_input, tar_input, teacher_forcing_rate=0)
-        if isinstance(output, tuple):  # attention이 같이 출력되는 경우 output만
-            output = output[0]
-        _, indices = output.view(-1, output.size(-1)).max(-1)
-        pred = self.tensor2sentence(indices.tolist())
-
-        print('Korean: ' + sentence)
-        print('Predict: ' + pred)
-        return pred
+        enc_input = self.src_input(sentence)
+        greedy_dec_input = self.greedy.greedy_decoder(enc_input)
+        output, _ = self.model(enc_input, greedy_dec_input)
+        indices = output.view(-1, output.size(-1)).max(-1)[1].tolist()
+        output_sentence = self.tensor2sentence(indices)
+        return output_sentence
