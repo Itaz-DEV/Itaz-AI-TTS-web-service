@@ -97,7 +97,7 @@ class Translation(object):  # Usage
                                                       region=region)
         self.EOS_ID = self.ko_voc['</s>']  # 1 End Token
         self.processing = PostProcessing()
-        self.literation = Transliteration(checkpoint='source/translation/Model/transliteration/best_seq2seq.pth',
+        self.literation = Transliteration(checkpoint='source/translation/Model/transliteration/best_transformer.pth',
                                           dictionary_path='source/translation/Dictionary/transliteration/')
 
     def model_load(self):
@@ -149,6 +149,8 @@ class Translation(object):  # Usage
         output_sentence = self.tensor2sentence_di(indices)[0]
         output_sentence = self.processing.post_processing(sentence, output_sentence)
         if "<un>" in output_sentence:      # Unk 발생시 원래문장 출력
+            return self.transliteration(sentence)
+        elif sentence.count("<") != output_sentence.count("<"):
             return self.transliteration(sentence)
 
         output_sentence = self.transliteration(output_sentence)
