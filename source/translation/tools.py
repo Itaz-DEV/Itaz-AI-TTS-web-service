@@ -150,6 +150,8 @@ class Translation(object):  # Usage
         output_sentence = self.processing.post_processing(sentence, output_sentence)
         if "<un>" in output_sentence:      # Unk 발생시 원래문장 출력
             return self.transliteration(sentence)
+        elif sentence.count("<") != output_sentence.count("<"):
+            return self.transliteration(sentence)
 
         output_sentence = self.transliteration(output_sentence)
         return output_sentence
