@@ -1,5 +1,12 @@
-from math import sqrt
-import torch
+import torch, random, numpy as np
+from source.hparams import create_hparams
+
+hparams = create_hparams()
+torch.manual_seed(hparams.seed)
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
+random.seed(hparams.seed)
+np.random.seed(hparams.seed)
 from torch.autograd import Variable
 from torch import nn
 from torch.nn import functional as F
@@ -277,8 +284,7 @@ class Decoder(nn.Module):
             B, MAX_TIME).zero_())
         self.attention_weights_cum = Variable(memory.data.new(
             B, MAX_TIME).zero_())
-        self.attention_context = Variable(memory.data.new(
-            B, self.encoder_embedding_dim).zero_())
+        self.attention_context = Variable(memory.data.new(B, self.encoder_embedding_dim).zero_())
 
         self.memory = memory
         self.processed_memory = self.attention_layer.memory_layer(memory)
@@ -333,7 +339,7 @@ class Decoder(nn.Module):
 
         return mel_outputs, gate_outputs, alignments
 
-    def decode(self, decoder_input):
+    def decode(self, decoder_input, step=0):
         """ Decoder step using stored states, attention and memory
         PARAMS
         ------
@@ -347,8 +353,7 @@ class Decoder(nn.Module):
         """
         cell_input = torch.cat((decoder_input, self.attention_context), -1)
         self.attention_hidden, self.attention_cell = self.attention_rnn(cell_input, (self.attention_hidden, self.attention_cell))
-        self.attention_hidden = F.dropout(
-            self.attention_hidden, self.p_attention_dropout, self.training)
+        self.attention_hidden = F.dropout(self.attention_hidden, self.p_attention_dropout, self.training)
 
         attention_weights_cat = torch.cat(
             (self.attention_weights.unsqueeze(1),
@@ -421,6 +426,7 @@ class Decoder(nn.Module):
         gate_outputs: gate outputs from the decoder
         alignments: sequence of attention weights from the decoder
         """
+        torch.manual_seed(hparams.seed)
         decoder_input = self.get_go_frame(memory)
 
         self.initialize_decoder_states(memory, mask=None)
@@ -455,11 +461,8 @@ class Tacotron2(nn.Module):
         self.fp16_run = hparams.fp16_run
         self.n_mel_channels = hparams.n_mel_channels
         self.n_frames_per_step = hparams.n_frames_per_step
-        self.embedding = nn.Embedding(
-            hparams.n_symbols, hparams.symbols_embedding_dim)
-        std = sqrt(2.0 / (hparams.n_symbols + hparams.symbols_embedding_dim))
-        val = sqrt(3.0) * std  # uniform bounds for std
-        self.embedding.weight.data.uniform_(-val, val)
+        self.embedding = nn.Embedding(hparams.n_symbols, hparams.symbols_embedding_dim)
+        torch.nn.init.xavier_uniform_(self.embedding.weight)
         self.encoder = Encoder(hparams)
         self.decoder = Decoder(hparams)
         self.postnet = Postnet(hparams)
