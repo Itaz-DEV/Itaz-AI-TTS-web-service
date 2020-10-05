@@ -52,6 +52,12 @@ def create_hparams(hparams_string=None, verbose=False):
         waveglow_jeju_path='source/outdir/male/gyeongsang/waveglow_gyeongsang_266000',
         waveglow_gyeongsang_path=r'source/outdir/male/gyeongsang/waveglow_gyeongsang_266000',
         waveglow_jeon_path=r'source/outdir/female/jeon/waveglow_240000',
+        tacotron_script_jeju_path=r'source/outdir/male/jeju/checkpoint_70056_script',
+        waveglow_script_jeju_path=r'source/outdir/male/gyeongsang/waveglow_gyeongsang_266000_script',
+        tacotron_script_gyeongsang_path=r'source/outdir/male/gyeongsang/checkpoint_58000_script',
+        waveglow_script_gyeongsang_path=r'source/outdir/male/gyeongsang/waveglow_gyeongsang_266000_script',
+        tacotron_script_jeon_path=r'source/outdir/female/jeon/checkpoint_155000_script',
+        waveglow_script_jeon_path=r'source/outdir/female/jeon/waveglow_240000_script',
         # Encoder parameters
         encoder_kernel_size=5,
         encoder_n_convolutions=3,
