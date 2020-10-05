@@ -172,7 +172,7 @@ def tts_inference(gender, model_type, korean):
     return res
 
 
-@app.route('/ml-inference', methods=['POST'])
+@app.route('/ml-inference-elastic', methods=['POST'])
 def ml_inference():
     print('====== Synthesizing ======')
     print(request.form)
@@ -183,7 +183,7 @@ def ml_inference():
     return res
 
 
-@app.route('/api-inference', methods=['POST'])
+@app.route('/api-inference-elastic', methods=['POST'])
 def api_inference():
     print('====== Synthesizing ======')
     data = request.get_json()
