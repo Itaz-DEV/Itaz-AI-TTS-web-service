@@ -113,7 +113,6 @@ class Text2Speech(object):
         for i, text in enumerate(txt_list):
             torch.cuda.empty_cache()
             sequence = np.array(hangul_to_sequence(text))[None, :]
-            sequence_length = len(text)
             sequence = torch.autograd.Variable(torch.from_numpy(sequence)).cuda().long()
             mel_outputs, mel_outputs_postnet, _, alignments = self.model.inference(sequence)
             ### calculate audio length
@@ -142,7 +141,7 @@ class Text2Speech(object):
                     [mel_outputs_postnet.transpose(2, 0)])
 
         print('Tacotron synthesize time: {}'.format(time.time() - start))
-        del sequence, sequence_length, mel_outputs, mel_outputs_postnet, audio_length, max_length, alignments
+        del sequence, mel_outputs, mel_outputs_postnet, audio_length, max_length, alignments
         return mels, error
 
     def wavenet_synthesize(self, mels):
