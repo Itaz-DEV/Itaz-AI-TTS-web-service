@@ -70,6 +70,8 @@ def load_preset_mel(folder, id=0):
 class Text2Speech(object):
     def __init__(self, model_type):
         self.hparams = create_hparams()
+        self.hparams.fp16_run=False
+        self.hparams.distributed_run=False
         self.checkpoint_path, self.waveglow_path = self.select_model(model_type)
         self.model = load_model(self.hparams)
         self.model.load_state_dict(torch.load(self.checkpoint_path)['state_dict'])
