@@ -87,7 +87,7 @@ def split_sentence(sentence):
 
 class Translation(object):  # Usage
     def __init__(self, checkpoint, dictionary_path, region=None, beam_search=False, k=3):
-        self.checkpoint = torch.load(checkpoint)
+        self.checkpoint = torch.load(checkpoint, map_location=torch.device('cpu'))
         self.seq_len = 200
         self.beam_search = beam_search
         self.k = k
