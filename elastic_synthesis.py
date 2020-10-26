@@ -69,6 +69,7 @@ def load_preset_mel(folder, id=0):
 class Text2Speech(object):
     def __init__(self, model_type):
         self.hparams = create_hparams()
+        self.hparams.fp16_run=False
         self.checkpoint_path, self.waveglow_path, self.tacotron_script_path, self.waveglow_script_path = self.select_model(model_type)
         #### load model here
 
