@@ -105,7 +105,6 @@ class Translation(object):  # Usage
         decoder = Decoder(**self.checkpoint['decoder_parameter'])
         model = Transformer(encoder, decoder)
         model = nn.DataParallel(model)
-        model.cuda()
         model.load_state_dict(self.checkpoint['model_state_dict'])
         model.eval()
         if self.beam_search:

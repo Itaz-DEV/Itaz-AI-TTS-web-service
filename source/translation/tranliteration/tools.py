@@ -28,7 +28,7 @@ class Transliteration(object):  # Usage
         encoder = Encoder(**self.checkpoint['encoder_parameter'])
         decoder = Decoder(**self.checkpoint['decoder_parameter'])
         model = Transformer(encoder, decoder)
-        model = nn.DataParallel(model).cuda()
+        model = nn.DataParallel(model)
         model.load_state_dict(self.checkpoint['model_state_dict'])
         model.eval()
         self.greedy = Greedy(model=model, seq_len=self.seq_len)
