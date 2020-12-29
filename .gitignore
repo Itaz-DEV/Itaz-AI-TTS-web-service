@@ -138,4 +138,5 @@ __pycache__
 *.wav
 *.png
 .java
-__pycache__
+.idea
+.git
