@@ -41,18 +41,55 @@ class Hparams():
         ################################
         n_symbols=len(symbols)
         symbols_embedding_dim=512
-        checkpoint_path_jeju="source/outdir/male/jeju/checkpoint_70056"
-        checkpoint_path_gyeongsang="source/outdir/male/gyeongsang/checkpoint_58000"
-        checkpoint_path_jeon="source/outdir/female/jeon/checkpoint_155000"
-        waveglow_jeju_path='source/outdir/male/gyeongsang/waveglow_gyeongsang_266000'
-        waveglow_gyeongsang_path=r'source/outdir/male/gyeongsang/waveglow_gyeongsang_266000'
-        waveglow_jeon_path=r'source/outdir/female/jeon/waveglow_240000'
-        tacotron_script_jeju_path=r'source/outdir/male/jeju/checkpoint_70056_script'
-        waveglow_script_jeju_path=r'source/outdir/male/gyeongsang/waveglow_gyeongsang_266000_script'
-        tacotron_script_gyeongsang_path=r'source/outdir/male/gyeongsang/checkpoint_58000_script'
-        waveglow_script_gyeongsang_path=r'source/outdir/male/gyeongsang/waveglow_gyeongsang_266000_script'
-        tacotron_script_jeon_path=r'source/outdir/female/jeon/checkpoint_155000_script'
-        waveglow_script_jeon_path=r'source/outdir/female/jeon/waveglow_240000_script'
+
+        ###  jeju
+        #       male
+        t_path_jeju_male="source/outdir/male/jeju/checkpoint_70056"
+        w_jeju_path_male="source/outdir/male/gyeongsang/waveglow_gyeongsang_266000"
+        #       female
+        t_path_jeju_female=""
+        w_jeju_path_female=""
+
+        ### standard
+        #       female
+        t_path_standard_female="source/outdir/female/standard/t_kss_206000_best"
+        w_jeju_standard_female="source/outdir/female/standard/waveglow_kss_315000"
+        #       male
+        t_path_standard_male=""
+        w_jeju_standard_male=""
+
+
+        ### gyeongsang
+        #       male
+        t_path_gyeongsang_male="source/outdir/male/gyeongsang/checkpoint_58000"
+        w_gyeongsang_path_male="source/outdir/male/gyeongsang/waveglow_gyeongsang_266000"
+
+        #       female
+        t_path_gyeongsang_female=""
+        w_gyeongsang_path_female=""
+
+
+        ###jeonla
+        # female
+        t_path_jeon_female="source/outdir/female/jeon/checkpoint_155000"
+        w_jeon_path_female="source/outdir/female/jeon/waveglow_240000"
+        ###jeonla
+        # male
+        t_path_jeon_male=""
+        w_jeon_path_male=""
+        ###
+
+        ### yeonbyeon
+        #       male
+        t_path_yeonbyeon_male = "source/outdir/female/yeonbyeon/checkpoint_6000_keep_for_backup"
+        w_yeonbyeon_path_male = "source/outdir/male/gyeongsang/waveglow_gyeongsang_266000"
+        ####       female
+        t_path_yeonbyeon_female = ""
+        w_yeonbyeon_path_female = ""
+        ###
+
+
+
         # Encoder parameters
         encoder_kernel_size=5
         encoder_n_convolutions=3

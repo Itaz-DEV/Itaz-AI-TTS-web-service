@@ -49,12 +49,7 @@ def save_audio_to_mel(filename):
     np_melspec = melspec.data.cpu().numpy()
     np.save(f'{filename.replace(".wav", ".npy")}', np_melspec, allow_pickle=True)
     print(f'{filename.replace(".wav", ".npy")}')
-### using this script to load audio and save as mel spectrogram
-# import os
-# for filename in os.listdir(r'source/preset_audio'):
-#     if filename.endswith('.wav'):
-#         f = os.path.join(r'source/preset_audio', filename)
-#         save_audio_to_mel(f)
+
 
 def load_preset_mel(folder, id=0):
     import os
@@ -68,11 +63,11 @@ def load_preset_mel(folder, id=0):
     return preset_mels[id]
 
 class Text2Speech(object):
-    def __init__(self, model_type):
+    def __init__(self, model_type, gender):
         self.hparams = create_hparams()
         self.hparams.fp16_run=False
         self.hparams.distributed_run=False
-        self.checkpoint_path, self.waveglow_path = self.select_model(model_type)
+        self.checkpoint_path, self.waveglow_path = self.select_model(model_type, gender)
         self.model = load_model(self.hparams)
         self.model.load_state_dict(torch.load(self.checkpoint_path)['state_dict'])
         self.waveglow = torch.load(self.waveglow_path)['model']
@@ -153,14 +148,30 @@ class Text2Speech(object):
         print('Wavenet synthesize time: {}'.format(time.time() - start))
         return audio
 
-    def select_model(self, model_type):
-        if model_type == '제주':
-            return self.hparams.checkpoint_path_jeju, self.hparams.waveglow_jeju_path
-        elif model_type == '경상':
-            return self.hparams.checkpoint_path_gyeongsang, self.hparams.waveglow_gyeongsang_path
-        elif model_type == '북한':
-            return None, None
-        elif model_type == '전라':
-            return self.hparams.checkpoint_path_jeon, self.hparams.waveglow_jeon_path
-        else:
-            raise NotImplementedError
+    def select_model(self, model_type,gender):
+        if gender == 'male':  ### male
+            if model_type == '제주':
+                return self.hparams.t_path_jeju_male, self.hparams.w_jeju_path_male
+            elif model_type == '경상':
+                return self.hparams.t_path_gyeongsang_male, self.hparams.w_gyeongsang_path_male
+            elif model_type == '전라':
+                return self.hparams.t_path_jeon_male, self.hparams.w_jeon_path_male
+            elif model_type == '연변':
+                return self.hparams.t_path_yeonbyeon_male, self.hparams.w_yeonbyeon_path_male
+            elif model_type == '표준':
+                return self.hparams.t_path_standard_male, self.hparams.w_jeju_standard_male
+            else:
+                raise NotImplementedError
+        else:  ### female
+            if model_type == '제주':
+                return self.hparams.t_path_jeju_female, self.hparams.w_jeju_path_female
+            elif model_type == '경상':
+                return self.hparams.t_path_gyeongsang_female, self.hparams.w_gyeongsang_path_female
+            elif model_type == '전라':
+                return self.hparams.t_path_jeon_female, self.hparams.waveglow_jeonla_female
+            elif model_type == '연변':
+                return self.hparams.t_path_yeonbyeon_female, self.hparams.w_yeonbyeon_path_female
+            elif model_type == '표준':
+                return self.hparams.t_path_standard_female, self.hparams.w_jeju_standard_female
+            else:
+                raise NotImplementedError

@@ -107,32 +107,72 @@ def clean_text(txt: str) -> list:
 app = Flask(__name__)
 
 jeju_translation = Korean2Dialect('jeju', beam_search=False, k=0)  # 제주 번역 클래스 선언
-gyeong_translation = Korean2Dialect('gyeong', beam_search=False, k=0)  # 경상 번역 클래스 선언
-jeon_translation = Korean2Dialect('jeon', beam_search=False, k=0)  # 전라 번역 클래스 선언
+gyeongsang_translation = Korean2Dialect('gyeong', beam_search=False, k=0)  # 경상 번역 클래스 선언
+jeonla_translation = Korean2Dialect('jeon', beam_search=False, k=0)  # 전라 번역 클래스 선언
+yeonbyeon_translation = Korean2Dialect('yb', beam_search=False, k=0)  # 전라 번역 클래스 선언
+## note that standard korean does not need the translation
 
-jeju_speech = Text2Speech('제주')  # 제주 음성합성 클래스 선언
-gyeong_speech = Text2Speech('경상')  # 경상 음성합성 클래스 선언
-jeon_speech = Text2Speech('전라')  # 전라 음성합성 클래스 선언
 
+jeju_speech_male = Text2Speech('제주','male')  # 제주 음성합성 클래스 선언
+gyeongsang_speech_male = Text2Speech('경상','male')  # 경상 음성합성 클래스 선언
+jeonla_speech_male = Text2Speech('전라','male')  # 전라 음성합성 클래스 선언
+yeonbyeon_speech_male = Text2Speech('연변','male')  # 연변 음성합성 클래스 선언
+# standard_speech_male = Text2Speech('표준','male')  # 표준어 음성합성 클래스 선언
+
+
+# jeju_speech_female = Text2Speech('제주','female')  # 제주 음성합성 클래스 선언
+gyeongsang_speech_female = Text2Speech('경상','female')  # 경상 음성합성 클래스 선언
+jeonla_speech_female = Text2Speech('전라','female')  # 전라 음성합성 클래스 선언
+# yeonbyeon_speech_female = Text2Speech('연변','female')  # 연변 음성합성 클래스 선언
+standard_speech_female = Text2Speech('표준','female')  # 표준어 음성합성 클래스 선언
 
 def tts_inference(gender, model_type, korean):
     total_time = time.time()
     # 사투리 결정
-    if model_type == 0:  # 제주도
-        korean2dialect = jeju_translation
-        text2speech = jeju_speech
-    elif model_type == 1:  # 경상도
-        korean2dialect = gyeong_translation
-        text2speech = gyeong_speech
-    elif model_type == 2:  # 전라도
-        korean2dialect = jeon_translation
-        text2speech = jeon_speech
-    else:
-        print(model_type)
-        raise NotImplementedError
+    if gender == 0:  ### male
+        if model_type == 0:  # 제주도
+            korean2dialect = jeju_translation
+            text2speech = jeju_speech_male
+        elif model_type == 1:  # 경상도
+            korean2dialect = gyeongsang_translation
+            text2speech = gyeongsang_speech_male
+        elif model_type == 2:  # 전라도
+            korean2dialect = jeonla_translation
+            text2speech = jeonla_speech_male
+        elif model_type == 3:  # 연변
+            korean2dialect = yeonbyeon_translation
+            text2speech = yeonbyeon_speech_male
+        elif model_type == 4:  # 표준
+            korean2dialect = None
+            text2speech = standard_speech_male
+        else:
+            print(model_type)
+            raise NotImplementedError
+    else:  ## female
+        if model_type == 0:  # 제주도
+            korean2dialect = jeju_translation
+            text2speech = jeju_speech_female
+        elif model_type == 1:  # 경상도
+            korean2dialect = gyeongsang_translation
+            text2speech = gyeongsang_speech_female
+        elif model_type == 2:  # 전라도
+            korean2dialect = jeonla_translation
+            text2speech = jeonla_speech_female
+        elif model_type == 3:  # 연변
+            korean2dialect = yeonbyeon_translation
+            text2speech = yeonbyeon_speech_female
+        elif model_type == 4:  # 표준
+            korean2dialect = None
+            text2speech = standard_speech_female
+        else:
+            print(model_type)
+            raise NotImplementedError
 
-    dialect = korean2dialect.transform(korean)
-    # dialect = korean
+    if model_type == '표준':
+        dialect = korean
+    else:
+        dialect = korean2dialect.transform(korean)
+
     translated_length = min(200,int(len(korean) * 2))
     dialect = dialect[:translated_length] if len(dialect) > translated_length else dialect  # 번역
     print(f'translated text: {dialect}')
@@ -177,7 +217,7 @@ def ml_inference():
     print('====== Synthesizing ======')
     print(request.form)
     gender = int(request.form['gender'])  # [0, 1] == ['남자', '여자']
-    model_type = int(request.form['model'])  # [0, 1, 2] = ['제주도', '경상도', '전라도]
+    model_type = int(request.form['model'])  # [0, 1, 2,3,4] = ['제주도', '경상도', '전라도','연변','표준']
     korean = request.form['input-text']  # 표준어 Input
     res = tts_inference(gender, model_type, korean)
     return res
@@ -189,7 +229,7 @@ def api_inference():
     data = request.get_json()
     print(data)
     gender = int(data['gender'])  # [0, 1] == ['남자', '여자']
-    model_type = int(data['model'])  # [0, 1, 2] = ['제주도', '경상도', '전라도]
+    model_type = int(data['model'])  # [0, 1, 2,3,4] = ['제주도', '경상도', '전라도','연변','표준']
     korean = data['input-text']  # 표준어 Input
     res = tts_inference(gender, model_type, korean)
     return res
