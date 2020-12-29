@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="8fe29b15-ce3b-4bfb-ad75-438376a5163f" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1llKGyXN7lWDqZUQJ8sPIl1eYbZ" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8fe29b15-ce3b-4bfb-ad75-438376a5163f" name="Default Changelist" comment="" />
+      <created>1608166152845</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1608166152845</updated>
+    </task>
+    <servers>
+      <GitHub url="https://github.com">
+        <option name="assignedIssuesOnly" value="true" />
+        <option name="repoAuthor" value="Itaz-DEV" />
+        <option name="repoName" value="Itaz-AI-TTS-web-service" />
+        <option name="user" value="thiennp223" />
+      </GitHub>
+    </servers>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="467" y="195" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1609217881709">
+      <screen x="107" y="0" width="1813" height="1080" />
+    </state>
+    <state x="467" y="195" key="#com.intellij.execution.impl.EditConfigurationsDialog/107.0.1813.1080/1920.0.1858.1080@107.0.1813.1080" timestamp="1609217881709" />
+    <state x="514" y="184" key="SettingsEditor" timestamp="1609217919278">
+      <screen x="107" y="0" width="1813" height="1080" />
+    </state>
+    <state x="514" y="184" key="SettingsEditor/107.0.1813.1080/1920.0.1858.1080@107.0.1813.1080" timestamp="1609217919278" />
+    <state x="721" y="272" width="584" height="536" key="find.popup" timestamp="1608190695603">
+      <screen x="107" y="0" width="1813" height="1080" />
+    </state>
+    <state x="721" y="272" width="584" height="536" key="find.popup/107.0.1813.1080/1920.0.1858.1080@107.0.1813.1080" timestamp="1608190695603" />
+    <state x="676" y="235" width="672" height="678" key="search.everywhere.popup" timestamp="1609217891946">
+      <screen x="107" y="0" width="1813" height="1080" />
+    </state>
+    <state x="676" y="235" width="672" height="678" key="search.everywhere.popup/107.0.1813.1080/1920.0.1858.1080@107.0.1813.1080" timestamp="1609217891946" />
+  </component>
+</project>
